@@ -1,0 +1,21 @@
+"C:\Program Files\JetBrains\CLion 2024.3.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2024.3.1/bin/ninja/win/x64/ninja.exe" -DCMAKE_TOOLCHAIN_FILE=C:\Users\mikol\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic -G Ninja -S C:\Users\mikol\CLionProjects\L2JIMP2\Include\curl\curl-8.12.1 -B C:\Users\mikol\CLionProjects\L2JIMP2\Include\curl\curl-8.12.1\cmake-build-debug
+-- Using CMake version 3.30.5
+CMake Error at CMakeLists.txt:70 (include):
+  include could not find requested file:
+
+    Utilities
+
+
+CMake Error at CMakeLists.txt:71 (include):
+  include could not find requested file:
+
+    Macros
+
+
+-- curl version=[8.12.1]
+-- CMake platform flags: WIN32 GCC MINGW VCPKG
+CMake Error at CMakeLists.txt:224 (curl_internal_test):
+  Unknown CMake command "curl_internal_test".
+
+
+-- Configuring incomplete, errors occurred!
