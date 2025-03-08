@@ -1238,6 +1238,42 @@
 			"value" : "C:/Users/mikol/CLionProjects/L2JIMP2"
 		},
 		{
+			"name" : "L2JMP2_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug"
+		},
+		{
+			"name" : "L2JMP2_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "L2JMP2_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "C:/Users/mikol/CLionProjects/L2JIMP2"
+		},
+		{
 			"name" : "VCPKG_APPLOCAL_DEPS",
 			"properties" : 
 			[

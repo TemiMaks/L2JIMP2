@@ -52,7 +52,7 @@ build cmake_object_order_depends_target_L2JIMP2: phony || .
 build CMakeFiles/L2JIMP2.dir/main.c.obj: C_COMPILER__L2JIMP2_unscanned_Debug C$:/Users/mikol/CLionProjects/L2JIMP2/main.c || cmake_object_order_depends_target_L2JIMP2
   DEP_FILE = CMakeFiles\L2JIMP2.dir\main.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/mikol/CLionProjects/L2JIMP2/Include/curl/curl-8.12.1/include
+  INCLUDES = -IC:/MinGW/curl-8.12.1_4-win64-mingw/include
   OBJECT_DIR = CMakeFiles\L2JIMP2.dir
   OBJECT_FILE_DIR = CMakeFiles\L2JIMP2.dir
 
@@ -66,7 +66,8 @@ build CMakeFiles/L2JIMP2.dir/main.c.obj: C_COMPILER__L2JIMP2_unscanned_Debug C$:
 
 build L2JIMP2.exe: C_EXECUTABLE_LINKER__L2JIMP2_Debug CMakeFiles/L2JIMP2.dir/main.c.obj | C$:/Users/mikol/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic/lib/libcurl.dll.a
   FLAGS = -g
-  LINK_LIBRARIES = C:/Users/mikol/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic/lib/libcurl.dll.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = C:/Users/mikol/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic/lib/libcurl.dll.a  -lws2_32  -lcrypt32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_PATH = -LC:/MinGW/curl-8.12.1_4-win64-mingw/bin
   OBJECT_DIR = CMakeFiles\L2JIMP2.dir
   POST_BUILD = C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\mikol\CLionProjects\L2JIMP2\cmake-build-debug && C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/mikol/.vcpkg-clion/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug/L2JIMP2.exe -installedDir C:/Users/mikol/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic/debug/bin -OutVariable out"
   PRE_LINK = cd .
