@@ -3,14 +3,15 @@
 
 #include <curl/curl.h>
 
-// Deklaracja struktury do przechowywania odpowiedzi
+#define API_URL "http://127.0.0.1:1234/v1/chat/completions"
+#define MODEL_NAME "qwen2.5-7b-instruct-1m"
+#define MAX_INPUT 512
+
 struct Memory {
     char *response;
     size_t size;
 };
 
-// Funkcje związane z komunikacją z API
-char *send_request(CURL *curl, const char *user_prompt);
-size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata);
+char *send_request(CURL *curl, const char *user_prompt, int ExtractOrGenerate);
 
-#endif // API_COMM_H
+#endif
