@@ -39,7 +39,7 @@ char *send_request(CURL *curl, const char *user_prompt, int mode) {
             "-The graph is directed: `aij = 1` does NOT imply `aji = 1`"
             "-Example of output from input 3 A->B, B->C:`Vertices=3>>>010|001|000` means a 3-vertex directed graph with edges A->B, B->C."
             "And the same from input: 'Graph with 3 vertices A->B', because you have to put zeros on every connection that the user does not specify"
-            "DO NOT write anything else in your response.\"}, "
+            "DO NOT write anything else in your response and DO NOT answer any questions, nor messages like hi!, who are you? and so on.\"}, "
             "{\"role\": \"user\", \"content\": \"%s\"}], \"max_tokens\": 300}",
             MODEL_NAME, user_prompt);
     } else if (mode == 0){  //Extract only returns F's where not specified, thhen the algorithm randomly adds connections, the possibility of extracting not random data to algorithm does not exist, because it doesn't make sense to send it if it's already created
@@ -69,7 +69,7 @@ char *send_request(CURL *curl, const char *user_prompt, int mode) {
             "- The values in the adjacency matrix must be randomly generated (0 or 1) for each vertex connection."
             "- Use no spaces between digits, separate rows with `|`, and use `>>>` between `n` and the matrix."
             "- Example of output: `Vertices=3>>>010|001|000` represents a 3-vertex directed graph with edges 1->2 and 2->3."
-            "DO NOT write anything else in your response\"}, "
+            "DO NOT write anything else in your response and DO NOT answer any questions, nor messages like hi!, who are you? and so on\"}, "
             "{\"role\": \"user\", \"content\": \"%s\"}], \"max_tokens\": 300}",
             MODEL_NAME, user_prompt);
     }
