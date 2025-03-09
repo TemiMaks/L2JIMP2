@@ -231,6 +231,15 @@ L2JIMP2_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 L2JIMP2_SOURCE_DIR:STATIC=C:/Users/mikol/CLionProjects/L2JIMP2
 
+//Value Computed by CMake
+L2JMP2_BINARY_DIR:STATIC=C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug
+
+//Value Computed by CMake
+L2JMP2_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+L2JMP2_SOURCE_DIR:STATIC=C:/Users/mikol/CLionProjects/L2JIMP2
+
 //Automatically copy dependencies into the output directory for
 // executables.
 VCPKG_APPLOCAL_DEPS:BOOL=ON

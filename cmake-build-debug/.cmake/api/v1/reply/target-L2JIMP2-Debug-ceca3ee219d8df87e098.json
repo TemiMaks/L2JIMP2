@@ -15,6 +15,7 @@
 		[
 			"_add_executable",
 			"add_executable",
+			"link_directories",
 			"target_link_libraries",
 			"include_directories"
 		],
@@ -31,7 +32,7 @@
 			{
 				"command" : 1,
 				"file" : 1,
-				"line" : 24,
+				"line" : 16,
 				"parent" : 0
 			},
 			{
@@ -43,13 +44,19 @@
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 27,
+				"line" : 8,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 1,
-				"line" : 10,
+				"line" : 19,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 7,
 				"parent" : 0
 			}
 		]
@@ -66,8 +73,8 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 4,
-					"path" : "C:/Users/mikol/CLionProjects/L2JIMP2/Include/curl/curl-8.12.1/include"
+					"backtrace" : 5,
+					"path" : "C:/MinGW/curl-8.12.1_4-win64-mingw/include"
 				}
 			],
 			"language" : "C",
@@ -100,7 +107,22 @@
 			},
 			{
 				"backtrace" : 3,
+				"fragment" : "-LC:\\MinGW\\curl-8.12.1_4-win64-mingw\\bin",
+				"role" : "libraryPath"
+			},
+			{
+				"backtrace" : 4,
 				"fragment" : "C:\\Users\\mikol\\.vcpkg-clion\\vcpkg\\installed\\x64-mingw-dynamic\\lib\\libcurl.dll.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "-lws2_32",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "-lcrypt32",
 				"role" : "libraries"
 			},
 			{

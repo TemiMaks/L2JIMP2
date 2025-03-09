@@ -1,117 +1,118 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curl/curl.h>
+#include "graph_generator.h"
+#include "api_comm.h"
+#include "graph_matrix.h"
+#include "utils.h"
 
-#define API_URL "http://127.0.0.1:1234/v1/completions"
-#define MODEL_NAME "qwen2.5-7b-instruct-1m"
-#define MAX_INPUT 1024
-#define MAX_RESPONSE 4096
-
-// Struktura do przechowywania odpowiedzi
-struct Memory {
-    char *response;
-    size_t size;
-};
-
-// Funkcja callback do zbierania odpowiedzi
-static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata) {
-    size_t total_size = size * nmemb;
-    struct Memory *mem = (struct Memory *)userdata;
-
-    char *tmp = realloc(mem->response, mem->size + total_size + 1);
-    if (!tmp) {
-        printf("Błąd alokacji pamięci!\n");
-        return 0;
-    }
-
-    mem->response = tmp;
-    memcpy(&(mem->response[mem->size]), ptr, total_size);
-    mem->size += total_size;
-    mem->response[mem->size] = 0;
-
-    return total_size;
-}
-
-// Funkcja do wysyłania zapytania i odbierania odpowiedzi
-char *send_request(CURL *curl, const char *prompt) {
-    struct Memory chunk = {0};
-    struct curl_slist *headers = NULL;
-    char json_data[MAX_INPUT + 100];
-
-    // Przygotowanie danych JSON
-    snprintf(json_data, sizeof(json_data),
-            "{\"model\": \"%s\", \"prompt\": \"%s\", \"max_tokens\": 100}",
-            MODEL_NAME, prompt);
-
-    // Konfiguracja nagłówków
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-
-    // Konfiguracja żądania
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &chunk);
-
-    // Wysłanie żądania
-    CURLcode res = curl_easy_perform(curl);
-
-    // Sprzątanie nagłówków
-    curl_slist_free_all(headers);
-
-    if (res != CURLE_OK) {
-        fprintf(stderr, "Błąd cURL: %s\n", curl_easy_strerror(res));
-        free(chunk.response);
-        return NULL;
-    }
-
-    return chunk.response;
-}
+#define MAX_INPUT 512
 
 int main() {
-    CURL *curl;
-    char user_input[MAX_INPUT];
-
-    // Inicjalizacja cURL
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl) {
-        fprintf(stderr, "Nie udało się zainicjalizować cURL\n");
+        fprintf(stderr, "CURL initialization failed\n");
         return 1;
     }
-
-    // Ustawienie URL
     curl_easy_setopt(curl, CURLOPT_URL, API_URL);
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
 
-    printf("Witaj w czacie z LLM! Wpisz 'exit' aby zakończyć.\n");
+    printf("Choose how to create the graph:\n");
+    printf("1. Structured input (e.g., number of vertices, random or specific edges)\n");
+    printf("2. Chat-based with LLM extraction (LLM extracts info, local algorithm builds matrix)\n");
+    printf("3. Chat-based with LLM generation (LLM generates full matrix)\n");
+    printf("Enter 1, 2, or 3: ");
+    char choice[MAX_INPUT];
+    fgets(choice, MAX_INPUT, stdin);
+    choice[strcspn(choice, "\n")] = 0;
 
-    // Główna pętla czatu
-    while (1) {
-        printf("\nTy: ");
+    AdjacencyMatrix matrix;
+    if (strcmp(choice, "1") == 0) {
+        printf("Enter the number of vertices: ");
+        char vertex_input[MAX_INPUT];
+        fgets(vertex_input, MAX_INPUT, stdin);
+        vertex_input[strcspn(vertex_input, "\n")] = 0;
+
+        int n = parse_vertex_count(vertex_input);
+        if (n < 0) {
+            curl_easy_cleanup(curl);
+            return 1;
+        }
+
+        printf("Should the graph be random? (yes/no): ");
+        char random_choice[MAX_INPUT];
+        fgets(random_choice, MAX_INPUT, stdin);
+        random_choice[strcspn(random_choice, "\n")] = 0;
+
+        if (strcasecmp(random_choice, "yes") == 0) {
+            matrix = generate_random_graph(n);
+        } else if (strcasecmp(random_choice, "no") == 0) {
+            printf("Enter edges (e.g., 'A->B, B->C'), or leave empty for no edges: ");
+            char edge_input[MAX_INPUT];
+            fgets(edge_input, MAX_INPUT, stdin);
+            edge_input[strcspn(edge_input, "\n")] = 0;
+
+            matrix = generate_user_defined_graph(n, edge_input);
+        } else {
+            fprintf(stderr, "Invalid choice\n");
+            curl_easy_cleanup(curl);
+            return 1;
+        }
+    } else if (strcmp(choice, "2") == 0) {
+        printf("Enter your request (e.g., 'Create a graph with 5 vertices, A->B, B->C'):\n");
+        char user_input[MAX_INPUT];
         fgets(user_input, MAX_INPUT, stdin);
-
-        // Usunięcie znaku nowej linii
         user_input[strcspn(user_input, "\n")] = 0;
 
-        // Sprawdzenie warunku wyjścia
-        if (strcmp(user_input, "exit") == 0) {
-            break;
+        int n = parse_vertex_count(user_input);
+        if (n < 0) {
+            fprintf(stderr, "Could not determine number of vertices\n");
+            curl_easy_cleanup(curl);
+            return 1;
         }
 
-        // Wysłanie zapytania i odebranie odpowiedzi
-        char *response = send_request(curl, user_input);
-
+        char *response = send_request(curl, user_input, 0); // Extract mode
         if (response) {
-            printf("LLM: %s\n", response);
+            printf("API Response:\n%s\n", response);
+            matrix = create_matrix_from_extracted(response, n);
             free(response);
         } else {
-            printf("Błąd: Nie udało się uzyskać odpowiedzi\n");
+            fprintf(stderr, "API communication error\n");
+            curl_easy_cleanup(curl);
+            return 1;
         }
+    } else if (strcmp(choice, "3") == 0) {
+        printf("Enter your request (e.g., 'Create a graph with 5 vertices' or '5 A->B, B->C'):\n");
+        char user_input[MAX_INPUT];
+        fgets(user_input, MAX_INPUT, stdin);
+        user_input[strcspn(user_input, "\n")] = 0;
+
+        char *response = send_request(curl, user_input, 1); // Generate mode
+        if (response) {
+            printf("API Response:\n%s\n", response);
+            matrix = parse_adjacency_matrix(response);
+            free(response);
+        } else {
+            fprintf(stderr, "API communication error\n");
+            curl_easy_cleanup(curl);
+            return 1;
+        }
+    } else {
+        fprintf(stderr, "Invalid option. Please enter 1, 2, or 3.\n");
+        curl_easy_cleanup(curl);
+        return 1;
     }
 
-    // Sprzątanie
-    curl_easy_cleanup(curl);
+    if (matrix.matrix == NULL) {
+        fprintf(stderr, "Failed to create graph\n");
+        curl_easy_cleanup(curl);
+        return 1;
+    }
 
-    printf("Do widzenia!\n");
+    printf("n=%d\n", matrix.n);
+    print_adjacency_matrix(&matrix);
+    free_adjacency_matrix(&matrix);
+
+    curl_easy_cleanup(curl);
     return 0;
 }
