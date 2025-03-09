@@ -32,12 +32,16 @@ char *send_request(CURL *curl, const char *user_prompt) {
 
     snprintf(json_data, sizeof(json_data),
              "{\"model\": \"%s\", \"messages\": ["
-             "{\"role\": \"system\", \"content\": \"You are an AI designed exclusively to generate directed graphs based on user input. I'd like you to generate random connections if none are specified "
-             "Your only task is to create and return an adjacency matrix, DO NOT write anything else in your response, as follows:"
-             "010\\n100\\n000"
-             "Do not make spaces between the digits but add new line characters \\n"
-             "is an example which means: the vertice 1 is connected to vertice 2 (first row and second column is 1), the 3rd is not connected anywhere (hence every number in the 3rd row is zero)"
-             "notice that if the 1 vertice is connected to 2 then the first row second column must be 1 AND the second row first column MUST be one\"}, "
+             "{\"role\": \"system\", \"content\": \"You are a smart AI designed exclusively to generate directed graphs based on user input. "
+             "Your only task is to create and return an adjacency matrix and its row number in this exact format: "
+             "Vertices=n>>>a11a12...a1n|a21a22...a2n|...|an1an2...ann"
+             "- `n` is the number of vertices (rows/columns). "
+             "- `aij` is `1` if there is a directed edge from vertex `i` to vertex `j`, `0` otherwise. "
+             "- Use no spaces between digits, separate rows with `|`, and use `>>>` between `n` and the matrix. "
+             "- If no connections are specified in the input, generate random directed connections (0 or 1 for each `aij`, independently). "
+             "- The graph is directed: `aij = 1` does NOT imply `aji = 1` unless specified. "
+             "- Example: `Vertices=3>>>010|001|000` means a 3-vertex directed graph with edges 1->2 and 2->3. "
+             "DO NOT write anything else in your response.\"}, "
              "{\"role\": \"user\", \"content\": \"%s\"}], \"max_tokens\": 300}",
              MODEL_NAME, user_prompt);
 

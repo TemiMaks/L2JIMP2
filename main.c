@@ -7,6 +7,7 @@
 
 #define API_URL "http://127.0.0.1:1234/v1/chat/completions"
 #define MAX_INPUT  512
+
 int main() {
     CURL *curl = curl_easy_init();
     if (!curl) {
@@ -26,9 +27,7 @@ int main() {
         printf("Odpowiedź z API:\n%s\n", response);
         AdjacencyMatrix matrix = parse_adjacency_matrix(response);
         printf("n=%d\n", matrix.n);
-        printf("1\n");
         print_adjacency_matrix(&matrix);
-        printf("2\n");
         free_adjacency_matrix(&matrix);
         free(response);
     }
