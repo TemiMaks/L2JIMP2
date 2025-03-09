@@ -12,6 +12,6 @@ struct Memory {
     size_t size;
 };
 
-char *send_request(CURL *curl, const char *user_prompt, int ExtractOrGenerate);
+char *send_request(CURL *curl, const char *user_prompt, int mode);
 
 #endif

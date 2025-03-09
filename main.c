@@ -10,6 +10,7 @@
 #define MAX_INPUT 512
 
 int main() {
+    srand(time(NULL));
     CURL *curl = curl_easy_init();
     if (!curl) {
         fprintf(stderr, "CURL initialization failed\n");
@@ -56,9 +57,8 @@ int main() {
             } else if (strcasecmp(gen_choice, "b") == 0) {
                 char prompt[MAX_INPUT];
                 snprintf(prompt, sizeof(prompt), "%d", n); // Just send number of vertices
-                char *response = send_request(curl, prompt, 1); // Generate mode
+                char *response = send_request(curl, prompt, 2); // Random mode
                 if (response) {
-                    printf("API Response:\n%s\n", response);
                     matrix = parse_adjacency_matrix(response);
                     free(response);
                 } else {
@@ -84,7 +84,7 @@ int main() {
                 snprintf(prompt, sizeof(prompt), "%d %s", n, edge_input);
                 char *response = send_request(curl, prompt, 1); // Generate mode
                 if (response) {
-                    printf("API Response:\n%s\n", response);
+                    //printf("API Response:\n%s\n", response);
                     matrix = parse_adjacency_matrix(response);
                     free(response);
                 } else {
@@ -115,9 +115,8 @@ int main() {
         proc_choice[strcspn(proc_choice, "\n")] = 0;
 
         if (strcasecmp(proc_choice, "a") == 0) {
-            char *response = send_request(curl, user_input, 1); // Generate mode
+            char *response = send_request(curl, user_input, 1); // Generate explicit only mode
             if (response) {
-                printf("API Response:\n%s\n", response);
                 matrix = parse_adjacency_matrix(response);
                 free(response);
             } else {
@@ -134,7 +133,6 @@ int main() {
             }
             char *response = send_request(curl, user_input, 0); // Extract mode
             if (response) {
-                printf("API Response:\n%s\n", response);
                 matrix = create_matrix_from_extracted(response, n);
                 free(response);
             } else {
@@ -158,8 +156,6 @@ int main() {
         curl_easy_cleanup(curl);
         return 1;
     }
-
-    printf("n=%d\n", matrix.n);
     print_adjacency_matrix(&matrix);
     free_adjacency_matrix(&matrix);
 

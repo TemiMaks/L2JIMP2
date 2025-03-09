@@ -75,7 +75,7 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
     }
 
     // Debug: Print matrix_start
-    printf("matrix_start: '%s'\n", matrix_start);
+    //printf("matrix_start: '%s'\n", matrix_start);
 
     // Parse matrix with '|' as delimiter
     char *matrix_copy = strdup(matrix_start);
@@ -89,7 +89,7 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
     int i = 0;
     char *line = strtok(matrix_copy, "|");
     while (line != NULL && i < num_rows) {
-        printf("Line %d: '%s'\n", i, line); // Debug line
+        //printf("Line %d: '%s'\n", i, line); // Debug line
         int j = 0;
         char *num = line;
         while (*num != '\0' && j < num_rows) {
