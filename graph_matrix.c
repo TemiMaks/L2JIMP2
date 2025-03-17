@@ -74,9 +74,6 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
         memset(matrix.matrix[i], 0, num_rows * sizeof(int));
     }
 
-    // Debug: Print matrix_start
-    printf("matrix_start: '%s'\n", matrix_start);
-
     // Parse matrix with '|' as delimiter
     char *matrix_copy = strdup(matrix_start);
     if (!matrix_copy) {
@@ -89,11 +86,19 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
     int i = 0;
     char *line = strtok(matrix_copy, "|");
     while (line != NULL && i < num_rows) {
-        printf("Line %d: '%s'\n", i, line); // Debug line
         int j = 0;
         char *num = line;
         while (*num != '\0' && j < num_rows) {
-            if (*num >= '0' && *num <= '1') {
+            if (*num == 'X') {
+                fprintf(stderr, "Błąd: Model AI zwrócił macierz z 'X', co oznacza niemożliwe połączenia w wiadomości użytkownika\n");
+                free(matrix_copy);
+                free_adjacency_matrix(&matrix);
+                free(content);
+                matrix.matrix = NULL;
+                matrix.n = 0;
+                return matrix;
+            }
+            else if (*num >= '0' && *num <= '1') {
                 matrix.matrix[i][j] = (*num - '0');
             } else {
                 fprintf(stderr, "Nieprawidłowy znak w wierszu %d: %c\n", i, *num);
