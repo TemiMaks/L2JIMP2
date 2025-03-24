@@ -1,3 +1,0 @@
-C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug/CMakeFiles/L2JIMP2.dir
-C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -1,4 +1,1 @@
-"C:\Program Files\JetBrains\CLion 2024.3.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2024.3.1/bin/ninja/win/x64/ninja.exe" -DCMAKE_TOOLCHAIN_FILE=C:\Users\mikol\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic -G Ninja -S C:\Users\mikol\CLionProjects\L2JIMP2 -B C:\Users\mikol\CLionProjects\L2JIMP2\cmake-build-debug
--- Configuring done (0.2s)
--- Generating done (0.1s)
--- Build files have been written to: C:/Users/mikol/CLionProjects/L2JIMP2/cmake-build-debug
+CMakeLists.txt not found in /home/szymon/Programowanie/C/L2JIMP2 Select CMakeLists.txt

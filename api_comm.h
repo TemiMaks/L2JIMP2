@@ -4,7 +4,7 @@
 #include <curl/curl.h>
 
 #define API_URL "http://127.0.0.1:1234/v1/chat/completions"
-#define MODEL_NAME "qwen2.5-7b-instruct-1m"
+#define MODEL_NAME "llama-3.2-1b-instruct"
 #define MAX_INPUT 512
 
 struct Memory {

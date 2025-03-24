@@ -156,6 +156,7 @@ int main() {
         curl_easy_cleanup(curl);
         return 1;
     }
+    printf("\n");
     print_adjacency_matrix(&matrix);
     free_adjacency_matrix(&matrix);
 
