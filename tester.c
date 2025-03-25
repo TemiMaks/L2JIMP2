@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define RED     "\033[1;31m"
 #define GREEN   "\033[1;32m"
@@ -51,7 +52,7 @@ int validateMatrix(int expWidth, int expHeight, int expVertices) {
 }
 
 void runTest(char *input){
-    FILE *process = popen("./graph_gen | grep -E '^[0-9 ]+$' > output.txt", "w");
+    FILE *process = popen("./graph_gen 2>/dev/null | grep -E '^[0-9 ]+$' > output.txt", "w");
     if (!process) {
         perror("popen failed");
         return;
@@ -110,6 +111,22 @@ int main(int argc, char *argv[]) {
         printf(RED "Test 3 failed\n" RESET);
         
     }
+
+    
+
+    //test 4
+    remove("output.txt");
+    vertices = 5;
+    snprintf(input, sizeof(input), "2\ncreate a graph with %d vertices\na", vertices);
+    runTest(input);
+
+    if (validateMatrix(vertices, vertices, vertices) == 0) {
+        printf(GREEN "Test 4 passed\n" RESET);
+    } else {
+        printf(RED "Test 4 failed\n" RESET);
+        
+    }
+
 
 
     return 0;
