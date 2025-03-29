@@ -1,162 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "graph_generator.h"
 #include "api_comm.h"
 #include "graph_matrix.h"
 #include "utils.h"
+#include "csrrg.h"
 
 #define MAX_INPUT 512
 
 int main(int argc, char **argv) {
     if (argc == 2 && strcmp(argv[1] + strlen(argv[1]) - 6, ".csrrg") == 0) {
-        FILE *f = fopen(argv[1], "r");
-        if (f == NULL) {
-            printf("Error opening file %s\n", argv[1]);
-        }
-        AdjacencyMatrix adjacencyMatrix;
-        int vertexCount = 0;
-        int capacityNumberOfVertices = 15, capacityConnectionsCount = 15;
-        char line[1024];
-        char *lineFour = NULL;
-        int nonEmpty = 0, lineCount = 0;
-        int *numberOfVertices = malloc(sizeof(int) * capacityNumberOfVertices); //Number of vertices in each row
-        int *connectionsCount = malloc(sizeof(int) * capacityConnectionsCount);
-        int maxRowVertices; //I don't think we'll be using it
-        //how many connections does each vertex have
-        if (numberOfVertices == NULL || connectionsCount == NULL) {
-            printf("Error allocating memory for the number of vertices and connections\n");
-            free(numberOfVertices);
-            free(connectionsCount);
-            return -2;
-        }
-        while (fgets(line, 1024, f)) {
-            lineCount++;
-            if (isEmptyLine(line)) {
-                //Skip empty lines
-                continue;
-            }
-            nonEmpty++;
-            if (nonEmpty == 1) {
-                //Line 1
-                maxRowVertices = atoi(line);
-                continue;
-            }
-            if (nonEmpty == 2) {
-                //I don't think we need to use this line for anything, it's just groups of vertices
-                continue;
-            }
-            if (nonEmpty == 3) {
-                int i = 0, prev = 0;
-                char *token = strtok(line, ";");
-                while (token) {
-                    int current = atoi(token);
-                    if (i > 0) numberOfVertices[i - 1] = current - prev; // Difference
-                    prev = current;
-                    token = strtok(NULL, ";");
-                    i++;
-                    if (i >= capacityNumberOfVertices) {
-                        capacityNumberOfVertices *= 2;
-                        int *temp = realloc(numberOfVertices, sizeof(int) * capacityNumberOfVertices);
-                        if (!temp) {
-                            free(numberOfVertices);
-                            free(connectionsCount);
-                            free(token);
-                            return -5;
-                        }
-                        numberOfVertices = temp;
-                    }
-                }
-                vertexCount = prev; // Last cumulative count is total vertices
-                continue;
-            }
-            if (nonEmpty == 4) {
-                //Line 4, skip for this moment but save it for processing later
-                lineFour = strdup(line);
-                continue;
-            }
-            if (nonEmpty == 5) {
-                //Line 5
-                int i = 0, prev = 0;
-                char *token = strtok(line, ";");
-                while (token != NULL) {
-                    int current = atoi(token);
-                    if (i > 0) {
-                        connectionsCount[i - 1] = current - prev;
-                    }
-                    prev = current;
-                    token = strtok(NULL, ";"); //Get next
-                    i++;
-                    if (i >= capacityConnectionsCount) {
-                        capacityConnectionsCount *= 2;
-                        int *temp = realloc(connectionsCount, sizeof(int) * capacityConnectionsCount);
-                        if (temp == NULL) {
-                            free(numberOfVertices);
-                            free(connectionsCount);
-                            free(lineFour);
-                            printf("Error reallocating memory for the number of connections\n");
-                            return -5;
-                        }
-                        connectionsCount = temp;
-                    }
-                }
-                continue;
-            }
-            if (nonEmpty > 5) {
-                printf("Invalid file line count, ignoring");
-                break;
-            }
-        }
-        if (lineFour != NULL) {
-            // Allocate matrix
-            adjacencyMatrix.n = vertexCount;
-            adjacencyMatrix.matrix = malloc(vertexCount * sizeof(int *));
-            if (!adjacencyMatrix.matrix) {
-                fprintf(stderr, "Błąd alokacji pamięci dla macierzy\n");
-                return -1;
-            }
-            for (int i = 0; i < vertexCount; i++) {
-                adjacencyMatrix.matrix[i] = malloc(vertexCount * sizeof(int));
-                if (!adjacencyMatrix.matrix[i]) {
-                    printf("Błąd alokacji pamięci dla wiersza z pliku %s\n", argv[1]);
-                    while (i > 0) free(adjacencyMatrix.matrix[--i]);
-                    free(adjacencyMatrix.matrix);
-                    adjacencyMatrix.matrix = NULL;
-                    return -1;
-                }
-                memset(adjacencyMatrix.matrix[i], 0, vertexCount * sizeof(int));
-            }
-            int group = 0;
-            int src;
-            char *token = strtok(lineFour, ";");
-            while (token != NULL) {
-                for (int i = 0; i < connectionsCount[group]; i++) {
-                    if (i == 0) src = atoi(token);
-                    int dest = atoi(token);
-                    if (src != dest) adjacencyMatrix.matrix[src][dest] = 1; //I think that a connection like 0->0 doesn't make sense
-                    token = strtok(NULL, ";");
-                }
-                group++;
-            }
-        }
-        fclose(f);
-        free(connectionsCount);
-        free(numberOfVertices);
-        FILE *result = fopen("graf.txt", "w");
-        if (!result) {
-            printf("Error opening result file from .csrrg -> %s\n", argv[1]);
-            freeAdjacencyMatrix(&adjacencyMatrix);
-            return -3;
-        }
-        printAdjacencyMatrixToFile(result, &adjacencyMatrix);
-        printConnectionsToFile(result, &adjacencyMatrix);
-        fclose(result);
-        freeAdjacencyMatrix(&adjacencyMatrix);
+        return processCsrrgFile(argv[1]);
     } else if (argc == 2) {
         printf("Invalid file format, use .csrrg to convert it to .txt");
-
-
     } else {
         srand(time(NULL));
         CURL *curl = curl_easy_init();
