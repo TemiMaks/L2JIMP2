@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
+AdjacencyMatrix parseAdjacencyMatrix(const char *json_response) {
     AdjacencyMatrix matrix = {NULL, 0};
 
     // Find "content" field
@@ -37,8 +37,8 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
         return matrix;
     }
     vertices_start += strlen("Vertices=");
-    int num_rows = atoi(vertices_start);
-    if (num_rows <= 0) {
+    int numRows = atoi(vertices_start);
+    if (numRows <= 0) {
         fprintf(stderr, "Nieprawidłowa liczba wierzchołków\n");
         free(content);
         return matrix;
@@ -54,15 +54,15 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
     matrix_start += strlen(">>>");
 
     // Allocate matrix
-    matrix.n = num_rows;
-    matrix.matrix = malloc(num_rows * sizeof(int *));
+    matrix.n = numRows;
+    matrix.matrix = malloc(numRows * sizeof(int *));
     if (!matrix.matrix) {
         fprintf(stderr, "Błąd alokacji pamięci dla macierzy\n");
         free(content);
         return matrix;
     }
-    for (int i = 0; i < num_rows; i++) {
-        matrix.matrix[i] = malloc(num_rows * sizeof(int));
+    for (int i = 0; i < numRows; i++) {
+        matrix.matrix[i] = malloc(numRows * sizeof(int));
         if (!matrix.matrix[i]) {
             fprintf(stderr, "Błąd alokacji pamięci dla wiersza\n");
             while (i > 0) free(matrix.matrix[--i]);
@@ -71,28 +71,28 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
             matrix.matrix = NULL;
             return matrix;
         }
-        memset(matrix.matrix[i], 0, num_rows * sizeof(int));
+        memset(matrix.matrix[i], 0, numRows * sizeof(int));
     }
 
     // Parse matrix with '|' as delimiter
     char *matrix_copy = strdup(matrix_start);
     if (!matrix_copy) {
         fprintf(stderr, "Błąd alokacji pamięci dla kopii macierzy\n");
-        free_adjacency_matrix(&matrix);
+        freeAdjacencyMatrix(&matrix);
         free(content);
         return matrix;
     }
 
     int i = 0;
     char *line = strtok(matrix_copy, "|");
-    while (line != NULL && i < num_rows) {
+    while (line != NULL && i < numRows) {
         int j = 0;
         char *num = line;
-        while (*num != '\0' && j < num_rows) {
+        while (*num != '\0' && j < numRows) {
             if (*num == 'X') {
                 fprintf(stderr, "Błąd: Model AI zwrócił macierz z 'X', co oznacza niemożliwe połączenia w wiadomości użytkownika\n");
                 free(matrix_copy);
-                free_adjacency_matrix(&matrix);
+                freeAdjacencyMatrix(&matrix);
                 free(content);
                 matrix.matrix = NULL;
                 matrix.n = 0;
@@ -106,14 +106,14 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
             j++;
             num++;
         }
-        if (j != num_rows) {
-            fprintf(stderr, "Niewłaściwa liczba elementów w wierszu %d (oczekiwano %d, znaleziono %d)\n", i, num_rows, j);
+        if (j != numRows) {
+            fprintf(stderr, "Niewłaściwa liczba elementów w wierszu %d (oczekiwano %d, znaleziono %d)\n", i, numRows, j);
         }
         i++;
         line = strtok(NULL, "|");
     }
-    if (i != num_rows) {
-        fprintf(stderr, "Niezgodna liczba wierszy w danych (oczekiwano %d, znaleziono %d)\n", num_rows, i);
+    if (i != numRows) {
+        fprintf(stderr, "Niezgodna liczba wierszy w danych (oczekiwano %d, znaleziono %d)\n", numRows, i);
     }
 
     free(matrix_copy);
@@ -121,7 +121,7 @@ AdjacencyMatrix parse_adjacency_matrix(const char *json_response) {
     return matrix;
 }
 
-void print_adjacency_matrix(const AdjacencyMatrix *matrix) {
+void printAdjacencyMatrix(const AdjacencyMatrix *matrix) {
     for (int i = 0; i < matrix->n; i++) {
         for (int j = 0; j < matrix->n; j++) {
             printf("%d ", matrix->matrix[i][j]);
@@ -130,7 +130,29 @@ void print_adjacency_matrix(const AdjacencyMatrix *matrix) {
     }
 }
 
-void free_adjacency_matrix(AdjacencyMatrix *matrix) {
+void printAdjacencyMatrixToFile(FILE *file, const AdjacencyMatrix *matrix) {
+    for (int i = 0; i < matrix->n; i++) {
+        fprintf(file, "[");
+        for (int j = 0; j < matrix->n; j++) {
+            fprintf(file, "%d. ", matrix->matrix[i][j]);
+        }
+        fprintf(file, "]\n");
+    }
+}
+
+void printConnectionsToFile(FILE *file, const AdjacencyMatrix *matrix) {
+    for (int i = 0; i < matrix->n; i++) {
+        for (int j = 0; j < matrix->n; j++) {
+            if (matrix->matrix[i][j] == 1) {
+                fprintf(file, "%d - %d\n", i, j);
+            }
+        }
+    }
+}
+
+
+
+void freeAdjacencyMatrix(AdjacencyMatrix *matrix) {
     for (int i = 0; i < matrix->n; i++) {
         free(matrix->matrix[i]);
     }
