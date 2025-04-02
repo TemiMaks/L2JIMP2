@@ -130,11 +130,14 @@ void printAdjacencyMatrix(const AdjacencyMatrix *matrix) {
     }
 }
 
-void printAdjacencyMatrixToFile(FILE *file, const AdjacencyMatrix *matrix) {
+void printAdjacencyMatrixToFile(FILE *file, const AdjacencyMatrix *matrix, int columns) {
     for (int i = 0; i < matrix->n; i++) {
-        fprintf(file, "[");
-        for (int j = 0; j < matrix->n; j++) {
-            fprintf(file, "%d. ", matrix->matrix[i][j]);
+        fprintf(file, " [");
+        for (int j = 0; j < columns; j++) {
+            fprintf(file, "%d.", matrix->matrix[i][j]);
+	    if (j < columns - 1) {
+	        fprintf(file, " ");
+	    }
         }
         fprintf(file, "]\n");
     }

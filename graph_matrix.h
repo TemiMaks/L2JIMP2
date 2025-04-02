@@ -11,7 +11,7 @@ typedef struct AdjacencyMatrix {
 // Funkcje do przetwarzania macierzy
 AdjacencyMatrix parseAdjacencyMatrix(const char *json_response);
 void printAdjacencyMatrix(const AdjacencyMatrix *matrix);
-void printAdjacencyMatrixToFile(FILE *file, const AdjacencyMatrix *matrix);
+void printAdjacencyMatrixToFile(FILE *file, const AdjacencyMatrix *matrix, int columns);
 void printConnectionsToFile(FILE *file, const AdjacencyMatrix *matrix);
 void freeAdjacencyMatrix(AdjacencyMatrix *matrix);
 

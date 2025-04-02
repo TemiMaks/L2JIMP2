@@ -19,7 +19,7 @@ int processCsrrgFile(const char *fileName) {
        Line 3: Pointers (cumulative indices) for the first index in each row (used to compute the count of nodes per row).
     */
     int maxRowNodes = 0;
-    char line[1024];
+    char line[1048576];
     char *line2 = NULL;  // For node indices (line 2)
     char *headerLine3 = NULL;  // Temporary buffer for line 3 processing
 
@@ -105,7 +105,27 @@ int processCsrrgFile(const char *fileName) {
          - numRows: the number of rows (from header line 3 differences).
          - maxRowNodes: used as the number of columns (assuming nodes are numbered 0 to maxRowNodes-1).
     */
-    int columns = maxRowNodes;
+    // Calculate actual number of columns based on max node index
+    int maxNodeIndex = -1;
+    char *line2CopyForMax = strdup(line2);
+    if (!line2CopyForMax) {
+        fprintf(stderr, "Memory allocation error for line2CopyForMax\n");
+        free(rowCounts);
+        free(line2);
+        fclose(f);
+        return -1;
+    }
+    char *token = strtok(line2CopyForMax, ";");
+    while (token) {
+        int nodeIndex = atoi(token);
+        if (nodeIndex > maxNodeIndex) {
+            maxNodeIndex = nodeIndex;
+        }
+        token = strtok(NULL, ";");
+    }
+    free(line2CopyForMax);
+    int columns = maxNodeIndex + 1;  // Actual columns needed
+
     AdjacencyMatrix adjacencyMatrix;
     adjacencyMatrix.n = numRows;
     adjacencyMatrix.matrix = malloc(numRows * sizeof(int *));
@@ -173,7 +193,7 @@ int processCsrrgFile(const char *fileName) {
         return -3;
     }
     // Print the adjacency matrix once.
-    printAdjacencyMatrixToFile(result, &adjacencyMatrix);
+    printAdjacencyMatrixToFile(result, &adjacencyMatrix, columns);
 
     /* --- Process one or more edge groups sections ---
        After the header (3 lines), the file contains pairs of non-empty lines:
@@ -249,7 +269,8 @@ int processCsrrgFile(const char *fileName) {
                         }
                         connCounts = temp;
                     }
-                    connCounts[numConnGroups++] = count;
+                    connCounts[numConnGroups] = count;
+                    numConnGroups++;
                 }
                 prev = current;
                 token = strtok(NULL, ";");
