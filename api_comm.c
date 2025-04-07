@@ -23,7 +23,7 @@ size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata) {
 char *send_request(CURL *curl, const char *user_prompt, int mode) {
     struct Memory chunk = {NULL, 0};
     struct curl_slist *headers = NULL;
-    char json_data[MAX_INPUT + 2048];
+    char json_data[MAX_INPUT_SIZE + 2048];
     if (mode == 1) {    //Specified only if not explicitly said
         snprintf(json_data, sizeof(json_data),
             "{\"model\": \"%s\", \"messages\": ["

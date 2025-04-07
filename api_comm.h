@@ -5,7 +5,7 @@
 
 #define API_URL "http://127.0.0.1:1234/v1/chat/completions"
 #define MODEL_NAME "qwen2.5-7b-instruct-1m"
-#define MAX_INPUT 512
+#define MAX_INPUT_SIZE 512
 
 struct Memory {
     char *response;

@@ -1,6 +1,6 @@
 # Code Documentary: Graph Generation Program
 
-This "code documentary" provides a detailed walkthrough of the provided C program, which generates directed graphs represented as adjacency matrices. The program offers flexibility in graph creation through user input (structured or chat-based) and supports both local algorithms and API-driven generation via a Large Language Model (LLM). The codebase is split across multiple files: `main.c`, `api_comm.c`, `graph_generator.c`, `graph_matrix.c`, and `utils.c`.
+This "code documentary" provides a detailed walkthrough of the provided C program, which generates directed graphs represented as adjacency matrices. The program offers flexibility in graph creation through user input (structured or chat-based) and supports both local algorithms and API-driven generation via a Large Language Model (LLM). The codebase is split across multiple files: `main.c`, `api_comm.c`, `graph_generator.c`, `graph_matrix.c`, `utils.c`, `csrrg.c` and `partition.c`.
 This document is designed to help understand the code's structure, functionality, and key components so that it can be implemented and tested
 ---
 
@@ -229,13 +229,13 @@ To compile and run the code, first install and link `libcurl`:
    ```
    2.**Compile**:
    ```bash
-   gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c -lcurl
+   gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c csrrg.c partition.c -lcurl
    ```
 ##### On Windows
 1. **Install**:
    ```vcpkg install curl```
 2. **Compile**:
-   ```MinGW: gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c -lcurl```
+   ```gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c csrrg.c partition.c -lcurl```
 ## Building and Running
 
 ### There are two ways to compile and run the code:

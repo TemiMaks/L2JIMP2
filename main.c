@@ -7,8 +7,6 @@
 #include "utils.h"
 #include "csrrg.h"
 
-#define MAX_INPUT 512
-
 int main(int argc, char **argv) {
     if (argc == 2 && strcmp(argv[1] + strlen(argv[1]) - 6, ".csrrg") == 0) {
         return processCsrrgFile(argv[1]);
@@ -28,16 +26,16 @@ int main(int argc, char **argv) {
         printf("1. Structured input (specify vertices and generation method)\n");
         printf("2. Chat-based input (natural language instructions via LLM)\n");
         printf("Enter 1 or 2: ");
-        char choice[MAX_INPUT];
-        fgets(choice, MAX_INPUT, stdin);
+        char choice[MAX_INPUT_SIZE];
+        fgets(choice, MAX_INPUT_SIZE, stdin);
         choice[strcspn(choice, "\n")] = 0;
 
         AdjacencyMatrix matrix;
         if (strcmp(choice, "1") == 0) {
             // Structured input
             printf("Enter the number of vertices: ");
-            char vertex_input[MAX_INPUT];
-            fgets(vertex_input, MAX_INPUT, stdin);
+            char vertex_input[MAX_INPUT_SIZE];
+            fgets(vertex_input, MAX_INPUT_SIZE, stdin);
             vertex_input[strcspn(vertex_input, "\n")] = 0;
 
             int n = parseVertexCount(vertex_input);
@@ -47,13 +45,13 @@ int main(int argc, char **argv) {
             }
 
             printf("Should the graph be random or user-specified? (random/user): ");
-            char spec_choice[MAX_INPUT];
-            fgets(spec_choice, MAX_INPUT, stdin);
+            char spec_choice[MAX_INPUT_SIZE];
+            fgets(spec_choice, MAX_INPUT_SIZE, stdin);
             spec_choice[strcspn(spec_choice, "\n")] = 0;
 
             printf("Generate with: a) Local algorithm, b) LLM? (a/b): ");
-            char gen_choice[MAX_INPUT];
-            fgets(gen_choice, MAX_INPUT, stdin);
+            char gen_choice[MAX_INPUT_SIZE];
+            fgets(gen_choice, MAX_INPUT_SIZE, stdin);
             gen_choice[strcspn(gen_choice, "\n")] = 0;
 
             if (strcasecmp(spec_choice, "random") == 0) {
@@ -78,14 +76,14 @@ int main(int argc, char **argv) {
                 }
             } else if (strcasecmp(spec_choice, "user") == 0) {
                 printf("Enter edges (e.g., 'A->B, B->C'), or leave empty for no edges: ");
-                char edge_input[MAX_INPUT];
-                fgets(edge_input, MAX_INPUT, stdin);
+                char edge_input[MAX_INPUT_SIZE];
+                fgets(edge_input, MAX_INPUT_SIZE, stdin);
                 edge_input[strcspn(edge_input, "\n")] = 0;
 
                 if (strcasecmp(gen_choice, "a") == 0) {
                     matrix = generate_user_defined_graph(n, edge_input);
                 } else if (strcasecmp(gen_choice, "b") == 0) {
-                    char prompt[MAX_INPUT];
+                    char prompt[MAX_INPUT_SIZE];
                     snprintf(prompt, sizeof(prompt), "%d %s", n, edge_input);
                     char *response = send_request(curl, prompt, 1); // Generate mode
                     if (response) {
@@ -110,13 +108,13 @@ int main(int argc, char **argv) {
         } else if (strcmp(choice, "2") == 0) {
             // Chat-based input
             printf("Enter your request (e.g., 'Create a graph with 5 vertices, A->B, B->C'):\n");
-            char user_input[MAX_INPUT];
-            fgets(user_input, MAX_INPUT, stdin);
+            char user_input[MAX_INPUT_SIZE];
+            fgets(user_input, MAX_INPUT_SIZE, stdin);
             user_input[strcspn(user_input, "\n")] = 0;
 
             printf("Process with: a) LLM full generation, b) LLM extraction + local algorithm? (a/b): ");
-            char proc_choice[MAX_INPUT];
-            fgets(proc_choice, MAX_INPUT, stdin);
+            char proc_choice[MAX_INPUT_SIZE];
+            fgets(proc_choice, MAX_INPUT_SIZE, stdin);
             proc_choice[strcspn(proc_choice, "\n")] = 0;
 
             if (strcasecmp(proc_choice, "a") == 0) {

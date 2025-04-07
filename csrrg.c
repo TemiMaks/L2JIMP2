@@ -5,6 +5,7 @@
 
 #include "graph_matrix.h"
 #include "utils.h"
+#include "partition.h"
 
 int processCsrrgFile(const char *fileName) {
     FILE *f = fopen(fileName, "r");
@@ -239,6 +240,7 @@ int processCsrrgFile(const char *fileName) {
             break;
         }
         int numConnGroups = 0;
+        int numConns = 0;
         {
             int i = 0, prev = 0;
             char *pointerCopy = strdup(pointerLine);
@@ -270,6 +272,7 @@ int processCsrrgFile(const char *fileName) {
                         connCounts = temp;
                     }
                     connCounts[numConnGroups] = count;
+                    numConns += count;
                     numConnGroups++;
                 }
                 prev = current;
@@ -284,6 +287,12 @@ int processCsrrgFile(const char *fileName) {
            The first token in each group is the source node; the subsequent tokens are destination nodes.
            Each edge is printed in the format "src - dest".
         */
+        
+        Edge *edges = malloc(numConns * sizeof(Edge));
+        if (!edges) {
+            fprintf(stderr, "Memory allocation error for edges\n");
+        } // For partitioning
+        int i = 0;
         {
             char *edgeCopy = strdup(edgeLine);
             if (!edgeCopy) {
@@ -305,6 +314,9 @@ int processCsrrgFile(const char *fileName) {
                         src = value;
                     } else {
                         int dest = value;
+                        edges[i].u = src;
+                        edges[i].v = dest;
+                        i++;
                         fprintf(result, "%d - %d\n", src, dest);
                     }
                     token = strtok(NULL, ";");
@@ -316,6 +328,7 @@ int processCsrrgFile(const char *fileName) {
         free(edgeLine);
         free(pointerLine);
         free(connCounts);
+        processPartitions("podzial.txt", numConns, vertexTotal, edges); // Processes graph partitioning into PARTS amount of partitions and prints the results to file.
     }
 
     //Cleanup

@@ -1,6 +1,6 @@
 # Dokumentacja Kodowa: Program Generujący Grafy
 
-Niniejsza "dokumentacja kodowa" zawiera szczegółowy opis dostarczonego programu w języku C, który generuje skierowane grafy reprezentowane jako macierze sąsiedztwa. Program oferuje elastyczność w tworzeniu grafów poprzez dane wejściowe użytkownika (strukturalne lub oparte na czacie) i wspiera zarówno lokalne algorytmy, jak i generowanie oparte na API za pomocą dużego modelu językowego (LLM). Kod źródłowy jest podzielony na kilka plików: `main.c`, `api_comm.c`, `graph_generator.c`, `graph_matrix.c` oraz `utils.c`. Dokument ten ma na celu ułatwienie zrozumienia struktury, funkcjonalności i kluczowych komponentów kodu, aby można go było zaimplementować i przetestować.
+Niniejsza "dokumentacja kodowa" zawiera szczegółowy opis dostarczonego programu w języku C, który generuje skierowane grafy reprezentowane jako macierze sąsiedztwa. Program oferuje elastyczność w tworzeniu grafów poprzez dane wejściowe użytkownika (strukturalne lub oparte na czacie) i wspiera zarówno lokalne algorytmy, jak i generowanie oparte na API za pomocą dużego modelu językowego (LLM). Kod źródłowy jest podzielony na kilka plików: `main.c`, `api_comm.c`, `graph_generator.c`, `graph_matrix.c`, `utils.c`, `csrrg.c` oraz `partition.c`. Dokument ten ma na celu ułatwienie zrozumienia struktury, funkcjonalności i kluczowych komponentów kodu, aby można go było zaimplementować i przetestować.
 
 ---
 
@@ -229,14 +229,14 @@ Aby skompilować i uruchomić kod, zainstaluj i podłącz `libcurl`:
    ```
    2.**Kompilacja**:
    ```bash
-   gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c -lcurl
+   gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c csrrg.c partition.c -lcurl
    ```
 #### Uwaga: Powyższe dotyczy MinGW; dla MSVC podłącz libcurl.lib z odpowiednimi nagłówkami.
 ##### Na Windows
 1. **Instalacja**:
    ```vcpkg install curl```
 2. **Kompilacja**:
-   ```MinGW: gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c -lcurl```
+   ```MinGW: gcc -o graph_gen main.c api_comm.c graph_generator.c graph_matrix.c utils.c csrrg.c partition.c -lcurl```
    
 ## Budowanie i Uruchamianie
 #### Istnieją dwa sposoby kompilacji i uruchomienia kodu:
