@@ -1,6 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-int parse_vertex_count(const char *input);
+#include <ctype.h>
+
+int parseVertexCount(const char *input);
+int isEmptyLine(const char *input);
 
 #endif

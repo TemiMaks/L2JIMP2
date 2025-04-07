@@ -1,5 +1,6 @@
 #ifndef GRAPH_MATRIX_H
 #define GRAPH_MATRIX_H
+#include <stdio.h>
 
 // Struktura reprezentująca macierz sąsiedztwa
 typedef struct AdjacencyMatrix {
@@ -8,8 +9,10 @@ typedef struct AdjacencyMatrix {
 } AdjacencyMatrix;
 
 // Funkcje do przetwarzania macierzy
-AdjacencyMatrix parse_adjacency_matrix(const char *json_response);
-void print_adjacency_matrix(const AdjacencyMatrix *matrix);
-void free_adjacency_matrix(AdjacencyMatrix *matrix);
+AdjacencyMatrix parseAdjacencyMatrix(const char *json_response);
+void printAdjacencyMatrix(const AdjacencyMatrix *matrix);
+void printAdjacencyMatrixToFile(FILE *file, const AdjacencyMatrix *matrix, int columns);
+void printConnectionsToFile(FILE *file, const AdjacencyMatrix *matrix);
+void freeAdjacencyMatrix(AdjacencyMatrix *matrix);
 
 #endif // GRAPH_MATRIX_H

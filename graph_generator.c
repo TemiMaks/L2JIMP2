@@ -75,7 +75,7 @@ AdjacencyMatrix generate_user_defined_graph(int n, const char *edges) {
         char *edges_copy = strdup(edges);
         if (!edges_copy) {
             fprintf(stderr, "Memory allocation error for edges copy\n");
-            free_adjacency_matrix(&matrix);
+            freeAdjacencyMatrix(&matrix);
             return matrix;
         }
 
@@ -140,7 +140,7 @@ AdjacencyMatrix create_matrix_from_extracted(const char *response, int n) {
     const char *matrix_start = strstr(response, ">>>");
     if (!matrix_start) {
         fprintf(stderr, "Invalid extracted format: '>>>' not found\n");
-        free_adjacency_matrix(&matrix);
+        freeAdjacencyMatrix(&matrix);
         return matrix;
     }
     matrix_start += strlen(">>>");
@@ -148,7 +148,7 @@ AdjacencyMatrix create_matrix_from_extracted(const char *response, int n) {
     char *matrix_copy = strdup(matrix_start);
     if (!matrix_copy) {
         fprintf(stderr, "Memory allocation error for matrix copy\n");
-        free_adjacency_matrix(&matrix);
+        freeAdjacencyMatrix(&matrix);
         return matrix;
     }
 
@@ -165,7 +165,7 @@ AdjacencyMatrix create_matrix_from_extracted(const char *response, int n) {
             } else {
                 fprintf(stderr, "Invalid character in matrix: %c\n", *num);
                 free(matrix_copy);
-                free_adjacency_matrix(&matrix);
+                freeAdjacencyMatrix(&matrix);
                 return matrix;
             }
             j++;
@@ -174,7 +174,7 @@ AdjacencyMatrix create_matrix_from_extracted(const char *response, int n) {
         if (j != n) {
             fprintf(stderr, "Row %d has incorrect length (expected %d, found %d)\n", i, n, j);
             free(matrix_copy);
-            free_adjacency_matrix(&matrix);
+            freeAdjacencyMatrix(&matrix);
             return matrix;
         }
         i++;
@@ -184,7 +184,7 @@ AdjacencyMatrix create_matrix_from_extracted(const char *response, int n) {
 
     if (i != n) {
         fprintf(stderr, "Mismatch in number of rows (expected %d, found %d)\n", n, i);
-        free_adjacency_matrix(&matrix);
+        freeAdjacencyMatrix(&matrix);
         matrix.matrix = NULL;
     }
 
