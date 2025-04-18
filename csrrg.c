@@ -328,6 +328,7 @@ int processCsrrgFile(const char *fileName) {
         free(edgeLine);
         free(pointerLine);
         free(connCounts);
+        printf("Koniec formatowania csrrg=>txt\n");
         processPartitions("podzial.txt", numConns, vertexTotal, edges); // Processes graph partitioning into PARTS amount of partitions and prints the results to file.
     }
 

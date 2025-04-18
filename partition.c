@@ -3,6 +3,11 @@
 #include <time.h>
 #include "partition.h"
 
+int PARTS = DEFAULT_PARTS;
+double THRESHOLD = 0.05; // Default threshold value
+int PARTITION_COUNT = 0;
+int PROCESS_COUNT = 0;
+
 int countCutEdges(int num_edges, Edge* edges, int* partition) {
     int cut = 0;
     for (int i = 0; i < num_edges; i++) {
@@ -14,6 +19,7 @@ int countCutEdges(int num_edges, Edge* edges, int* partition) {
 }
 
 void randomPartition(int num_nodes, int* partition, int* counts) {
+    printf("Random partition\n");
     for (int i = 0; i < PARTS; i++) counts[i] = 0;
     for (int i = 0; i < num_nodes; i++) {
         int p;
@@ -25,12 +31,16 @@ void randomPartition(int num_nodes, int* partition, int* counts) {
     }
 }
 
-void optimizePartition(int num_nodes, int num_edges, Edge* edges, int* partition, int* counts, int iterations) {
-    for (int iter = 0; iter < iterations; iter++) {
+void optimizePartition(int num_nodes, int num_edges, Edge* edges, int* partition, int* counts) {
+    printf("Optimizing partition %d\n", PARTITION_COUNT);
+    PARTITION_COUNT++;
+    int max_iterations = 100; // Prevent infinite loops
+    for (int iter = 0; iter < max_iterations; iter++) {
+        int old_cut = countCutEdges(num_edges, edges, partition);
         for (int i = 0; i < num_nodes; i++) {
             int current_part = partition[i];
             int best_part = current_part;
-            int min_cut = countCutEdges(num_edges, edges, partition);
+            int min_cut = old_cut;
 
             for (int p = 0; p < PARTS; p++) {
                 if (p == current_part) continue;
@@ -57,14 +67,22 @@ void optimizePartition(int num_nodes, int num_edges, Edge* edges, int* partition
                 counts[best_part]++;
             }
         }
+        int new_cut = countCutEdges(num_edges, edges, partition);
+        if (old_cut == 0) break; // Avoid division by zero if cut size is already 0
+        double improvement = (double)(old_cut - new_cut) / old_cut;
+        if (improvement < THRESHOLD) {
+            printf("Stopped at iteration %d with improvement %f < %f\n", iter, improvement, THRESHOLD);
+            break;
+        }
     }
 }
 
 void saveResultsToFile(const char* filename, int num_nodes, int* partition, int* counts, int num_edges, Edge* edges) {
+    printf("Pisanie do pliku rozpoczete\n");
     FILE* file = fopen(filename, "w");
     if (!file) {
         printf("Nie udało się otworzyć pliku do zapisu.\n");
-	return;
+        return;
     }
     for (int p = 0; p < PARTS; p++) {
         fprintf(file, "Partition %d (%d nodes):", p + 1, counts[p]);
@@ -79,8 +97,10 @@ void saveResultsToFile(const char* filename, int num_nodes, int* partition, int*
 
     fclose(file);
 }
- 
+
 void processPartitions(const char *filename, int num_edges, int num_nodes, Edge* edges) {
+    printf("Processing partition %d\n", PROCESS_COUNT);
+    PROCESS_COUNT++;
     int* partition = (int*)malloc(sizeof(int) * num_nodes);
     int* counts = (int*)malloc(sizeof(int) * PARTS);
     int* best_partition = (int*)malloc(sizeof(int) * num_nodes);
@@ -89,7 +109,7 @@ void processPartitions(const char *filename, int num_edges, int num_nodes, Edge*
 
     for (int t = 0; t < NUM_TRIES; t++) {
         randomPartition(num_nodes, partition, counts);
-        optimizePartition(num_nodes, num_edges, edges, partition, counts, 100);
+        optimizePartition(num_nodes, num_edges, edges, partition, counts);
 
         int current_cut = countCutEdges(num_edges, edges, partition);
         if (current_cut < best_cut) {

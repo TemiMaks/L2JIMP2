@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "csrrg.h"
 
+
 int main(int argc, char **argv) {
     if (argc == 2 && strcmp(argv[1] + strlen(argv[1]) - 6, ".csrrg") == 0) {
         return processCsrrgFile(argv[1]);
@@ -58,7 +59,7 @@ int main(int argc, char **argv) {
                 if (strcasecmp(gen_choice, "a") == 0) {
                     matrix = generate_random_graph(n);
                 } else if (strcasecmp(gen_choice, "b") == 0) {
-                    char prompt[MAX_INPUT];
+                    char prompt[MAX_INPUT_SIZE];
                     snprintf(prompt, sizeof(prompt), "%d", n); // Just send number of vertices
                     char *response = send_request(curl, prompt, 2); // Random mode
                     if (response) {
