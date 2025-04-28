@@ -13,9 +13,9 @@ typedef struct {
 extern int PARTS;
 extern double THRESHOLD;
 
-int countCutEdges(int num_edges, Edge* edges, int* partition);
-void randomPartition(int num_nodes, int* partition, int* counts);
-void optimizePartition(int num_nodes, int num_edges, Edge* edges, int* partition, int* counts);
+int countCutEdges(int numEdges, Edge* edges, int* partition);
+void randomPartition(int numNodes, int* partition, int* counts);
+void optimizePartition(int numNodes, int numEdges, Edge* edges, int* partition, int* counts);
 void saveResultsToFile(const char* filename, int num_nodes, int* partition, int* counts, int num_edges, Edge* edges);
 void processPartitions(const char* filename, int num_edges, int num_nodes, Edge* edges);
 
