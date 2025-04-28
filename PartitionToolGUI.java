@@ -35,14 +35,23 @@ public class PartitionToolGUI {
             JSpinner partsSpinner = new JSpinner(partsModel);
             partsSpinner.setPreferredSize(new Dimension(60, partsSpinner.getPreferredSize().height));
 
-            SpinnerNumberModel thresholdModel = new SpinnerNumberModel(0.05, 0.01, 1.0, 0.01);
+            SpinnerNumberModel thresholdModel = new SpinnerNumberModel(0.05, 0.001, 1.0, 0.001);
             JSpinner thresholdSpinner = new JSpinner(thresholdModel);
             thresholdSpinner.setPreferredSize(new Dimension(60, thresholdSpinner.getPreferredSize().height));
 
+            SpinnerNumberModel toleranceModel = new SpinnerNumberModel(0.05, 0.0, 1.0, 0.01);
+            JSpinner toleranceSpinner = new JSpinner(toleranceModel);
+            toleranceSpinner.setPreferredSize(new Dimension(60, toleranceSpinner.getPreferredSize().height));
+
             controls.add(new JLabel("Partitions:"));
             controls.add(partsSpinner);
+
             controls.add(new JLabel("Threshold:"));
             controls.add(thresholdSpinner);
+
+            controls.add(new JLabel("Tolerance:"));
+            controls.add(toleranceSpinner);
+
             controls.add(fileField);
             controls.add(browse);
             controls.add(process);
@@ -59,9 +68,15 @@ public class PartitionToolGUI {
 
             tabs.addTab("Adjacency (graf.txt)", new JScrollPane(matrixArea));
             tabs.addTab("Partition (podzial.txt)", new JScrollPane(partitionArea));
+
+            GraphPanel rawGraphPanel = new GraphPanel();
+            tabs.addTab("Original Graph", new JScrollPane(rawGraphPanel));
+
             GraphPanel graphPanel = new GraphPanel();
-            tabs.addTab("Graph View", new JScrollPane(graphPanel));
+            tabs.addTab("Partitioned Graph", new JScrollPane(graphPanel));
+
             main.add(tabs, BorderLayout.CENTER);
+
 
             // File selection
             browse.addActionListener(e -> {
@@ -80,18 +95,26 @@ public class PartitionToolGUI {
                 String filePath = fileField.getText();
                 int numParts = (Integer) partsSpinner.getValue();
                 double threshold = (Double) thresholdSpinner.getValue();
-                runPartitioner(filePath, numParts, threshold, frame, matrixArea, partitionArea, graphPanel);
+                double tolerance = (Double) toleranceSpinner.getValue();
+                runPartitioner(filePath, numParts, threshold, tolerance, frame, matrixArea, partitionArea, graphPanel, rawGraphPanel);
             });
 
             frame.setVisible(true);
         });
     }
 
-    private static void runPartitioner(String cssrgPath, int numParts, double threshold, JFrame frame,
-                                       JTextArea matrixArea, JTextArea partitionArea, GraphPanel graphPanel) {
+    private static void runPartitioner(String cssrgPath, int numParts, double threshold, double tolerance, JFrame frame,
+                                       JTextArea matrixArea, JTextArea partitionArea,
+                                       GraphPanel graphPanel, GraphPanel rawGraphPanel)
+    {
         try {
             //Use .exe from C project to call the main method (main_partition.c, with given parameters)
-            ProcessBuilder pb = new ProcessBuilder(EXECUTABLE, cssrgPath, String.valueOf(numParts), String.valueOf(threshold));
+            ProcessBuilder pb = new ProcessBuilder(EXECUTABLE,
+                    cssrgPath,
+                    String.valueOf(numParts),
+                    String.valueOf(threshold),
+                    String.valueOf(tolerance));
+
             pb.redirectErrorStream(true);
             pb.directory(new File(System.getProperty("user.dir")));
             Process p = pb.start();
@@ -109,7 +132,8 @@ public class PartitionToolGUI {
 
             matrixArea.setText(Files.readString(Paths.get("graf.txt")));
             partitionArea.setText(Files.readString(Paths.get("podzial.txt")));
-            graphPanel.loadGraph("graf.txt", "podzial.txt");
+            graphPanel.loadGraph("podzial.txt", "graf.txt");
+            rawGraphPanel.loadGraph("graf.txt");
 
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
